@@ -14,5 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file DOCKERFILE --tag my-image-name:$(date +%s)
+    - name: Build the Docker image adn push to ghcr.io
+      run: |
+        docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
+        docker build . --file DOCKERFILE --tag ghcr.io/seboknt/web:latest:latest
+        docker push ghcr.io/seboknt/web:latest:latest
