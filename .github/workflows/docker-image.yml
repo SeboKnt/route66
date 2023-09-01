@@ -13,9 +13,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Cache docker buildx
+      uses: actions/cache@v2
+      with:
+        path: |
+          /home/runner/.docker
+          /tmp/.buildx-cache
+        key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+
+
     - name: Build the Docker image adn push to ghcr.io
-      run: |
-        docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
-        docker build . --file DOCKERFILE --tag ghcr.io/seboknt/web:latest
-        docker push ghcr.io/seboknt/web:latest
+      run: | 
+        docker buildx create --use
+        docker buildx build --platform linux/amd64,linux/arm64 -f DOCKERFILE -t ${GITHUB_REPOSITORY,,}:dev .
+
+        #docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
+        #docker build . --file DOCKERFILE --tag ghcr.io/seboknt/web:latest
+        #docker push ghcr.io/seboknt/web:latest
