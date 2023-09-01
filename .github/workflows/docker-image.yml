@@ -22,32 +22,38 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
-          /home/runner/.docker
-          /tmp/.buildx-cache
-        key: docker-${{ hashFiles('**/Dockerfile') }}
+          /home/runner/tmp
+        key: docker-tmp
 
     - name: Build the Docker image and push to ghcr.io
       run: | 
         docker buildx create --use
+        docker buildx inspect --bootstrap
 
-        docker buildx \
-          --cache-from ${GITHUB_REPOSITORY,,}:amd64 \ 
-          --cache-to ${GITHUB_REPOSITORY,,}:amd64 \
+        docker buildx build \
           --platform linux/amd64 \
-          -f DOCKERFILE .
+          --cache-from type=local,dest=/home/runner/tmp/amd64 \
+          --cache-to type=local,dest=/home/runner/tmp/amd64 \
+          --tag seboknt/66:amd64 \
+          --file DOCKERFILE .
 
-        docker buildx \
-          --cache-from ${GITHUB_REPOSITORY,,}:arm64 \ 
-          --cache-to ${GITHUB_REPOSITORY,,}:arm64 \
+        echo "-------------------------------------------------------------------------------------------------------"
+
+        docker buildx build \
           --platform linux/arm64 \
-          -f DOCKERFILE .
+          --cache-from type=local,dest=/home/runner/tmp/arm64 \
+          --cache-to type=local,dest=/home/runner/tmp/arm64 \
+          --tag seboknt/66:arm64 \
+          --file DOCKERFILE .
+
+        echo "-------------------------------------------------------------------------------------------------------"
 
         docker buildx build \
           --platform linux/amd64,linux/arm64 \
-          --cache-from ${GITHUB_REPOSITORY,,}:amd64 \
-          --cache-from ${GITHUB_REPOSITORY,,}:arm64 \
-          -t ${GITHUB_REPOSITORY,,}:dev \
-          -f DOCKERFILE .
+          --cache-from type=local,dest=/home/runner/tmp/amd64 \
+          --cache-from type=local,dest=/home/runner/tmp/arm64 \
+          --tag seboknt/66:dev \
+          --file DOCKERFILE .
 
 
         #docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
