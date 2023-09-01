@@ -24,18 +24,31 @@ jobs:
         path: |
           /home/runner/.docker
           /tmp/.buildx-cache
-        key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
-
+        key: docker-${{ hashFiles('**/Dockerfile') }}
 
     - name: Build the Docker image and push to ghcr.io
       run: | 
         docker buildx create --use
+
+        docker buildx \
+          --cache-from ${GITHUB_REPOSITORY,,}:amd64 \ 
+          --cache-to ${GITHUB_REPOSITORY,,}:amd64 \
+          --platform linux/amd64 \
+          -f DOCKERFILE .
+
+        docker buildx \
+          --cache-from ${GITHUB_REPOSITORY,,}:arm64 \ 
+          --cache-to ${GITHUB_REPOSITORY,,}:arm64 \
+          --platform linux/arm64 \
+          -f DOCKERFILE .
+
         docker buildx build \
           --platform linux/amd64,linux/arm64 \
-          --cache-from  ${GITHUB_REPOSITORY,,}:dev \
-          --cache-to ${GITHUB_REPOSITORY,,}:dev \ 
-          --tag ${GITHUB_REPOSITORY,,}:dev \
-          --file DOCKERFILE .
+          --cache-from ${GITHUB_REPOSITORY,,}:amd64 \
+          --cache-from ${GITHUB_REPOSITORY,,}:arm64 \
+          -t ${GITHUB_REPOSITORY,,}:dev \
+          -f DOCKERFILE .
+
 
         #docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
         #docker build . --file DOCKERFILE --tag ghcr.io/seboknt/web:latest
