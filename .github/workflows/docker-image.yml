@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch: {}
 
 jobs:
 
@@ -26,10 +27,15 @@ jobs:
         key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
 
 
-    - name: Build the Docker image adn push to ghcr.io
+    - name: Build the Docker image and push to ghcr.io
       run: | 
         docker buildx create --use
-        docker buildx build --platform linux/amd64,linux/arm64 -f DOCKERFILE -t ${GITHUB_REPOSITORY,,}:dev .
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --cache-from  ${GITHUB_REPOSITORY,,}:dev \
+          --cache-to ${GITHUB_REPOSITORY,,}:dev \ 
+          --tag ${GITHUB_REPOSITORY,,}:dev \
+          --file DOCKERFILE .
 
         #docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
         #docker build . --file DOCKERFILE --tag ghcr.io/seboknt/web:latest
