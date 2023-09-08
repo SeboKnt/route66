@@ -7,6 +7,10 @@ on:
     branches: [ "main" ]
   workflow_dispatch: {}
 
+env:
+  amd: "linux/amd64"
+  amd-cache: "type=local,src=/home/runner/tmp/amd64"
+
 jobs:
 
   build:
@@ -35,8 +39,8 @@ jobs:
       run: |
         tree /home/runner/tmp/
         if ! docker buildx build \
-          --platform linux/amd64 \
-          --cache-from type=local,src=/home/runner/tmp/amd64 \
+          --platform $amd \
+          --cache-from $amd-cache \
           --cache-to type=local,dest=/home/runner/tmp/amd64 \
           --tag ${GITHUB_REPOSITORY,,}:amd64 \
           --file DOCKERFILE . ; 
