@@ -38,10 +38,10 @@ jobs:
           --cache-from type=local,src=/home/runner/tmp/amd64 \
           --cache-to type=local,dest=/home/runner/tmp/amd64 \
           --tag ${GITHUB_REPOSITORY,,}:amd64 \
-          --file DOCKERFILE .; 
+          --file DOCKERFILE . ; 
         then
-          echo "::error::Docker-Build Error. Cache will be deleted now!" && \
-          rm -rf /home/runner/tmp/amd64
+          echo "::error::Docker-Build Error. Cache will be deleted now!"
+          rm -rf /home/runner/tmp/
         fi
 
     - name: echo 
