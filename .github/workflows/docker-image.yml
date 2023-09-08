@@ -17,20 +17,20 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v3
-    
-    - name: Cache docker buildx
-      uses: actions/cache@v2
-      with:
-        path: |
-          /home/runner/tmp
-        key: docker-tmp
 
+    - name: update cache on every commit
+      uses: actions/cache@v3
+      with:
+        path: /home/runner/tmp
+        key: docker-${{ runner.os }}-${{ github.run_id }}
+        restore-keys: |
+          docker-${{ runner.os }}
+    
     - name: Env prep
       run: | 
         docker buildx create --use
         docker buildx inspect --bootstrap
 
-    
     - name: Docker Build
       run: |
         tree /home/runner/tmp/
