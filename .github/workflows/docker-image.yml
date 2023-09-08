@@ -43,9 +43,9 @@ jobs:
         then
           echo "::error::Docker-Build Error. Cache will be deleted now!"
           tree /home/runner/tmp/
-          rm -rf /home/runner/tmp/amd64
-          touch /home/runner/tmp/aufJedenEineAndereDatei
-          tree /home/runner/tmp/
+          #rm -rf /home/runner/tmp/amd64
+          #touch /home/runner/tmp/aufJedenEineAndereDatei
+          #tree /home/runner/tmp/
         fi
 
     - name: echo 
