@@ -1,5 +1,5 @@
 # Dockerfile
-FROMM alpine
+FROM alpine
 RUN apk add nginx php
 RUN mkdir -p /run/nginx
 RUN touch /run/nginx/nginx.pid
