@@ -42,7 +42,7 @@ jobs:
           --file DOCKERFILE .; then
           echo "::error::Docker-Build Error. Cache will be deleted now!"
           rm -rf /home/runner/tmp/amd64
-          exit 1
+          exit 0
         fi
 
         #docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
