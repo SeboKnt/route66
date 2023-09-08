@@ -33,7 +33,6 @@ jobs:
     
     - name: Docker Build
       run: |
-        set -e
         if ! docker buildx build \
           --platform linux/amd64 \
           --cache-from type=local,src=/home/runner/tmp/amd64 \
