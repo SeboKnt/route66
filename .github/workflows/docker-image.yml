@@ -8,8 +8,24 @@ on:
   workflow_dispatch: {}
 
 env:
-  amd: "linux/amd64"
-  amd-cache: "type=local,src=/home/runner/tmp/amd64"
+  build_and_cache: |-
+    build_and_cache() {
+      platform=$1
+      cache_path=$2
+      tag_suffix=$3
+      cache_name=$4
+
+      if ! docker buildx build \
+        --platform $platform \
+        --cache-from type=local,src=$cache_path \
+        --cache-to type=local,dest=$cache_path \
+        --tag ${GITHUB_REPOSITORY,,}:$tag_suffix \
+        --file Dockerfile . ;
+      then
+        echo "::error::Docker-Build Error. $cache_name Cache will be deleted now!"
+        rm -rf $cache_path
+      fi
+    }
 
 jobs:
 
@@ -37,27 +53,5 @@ jobs:
 
     - name: Docker Build
       run: |
-        tree /home/runner/tmp/
-        if ! docker buildx build \
-          --platform $amd \
-          --cache-from $amd-cache \
-          --cache-to type=local,dest=/home/runner/tmp/amd64 \
-          --tag ${GITHUB_REPOSITORY,,}:amd64 \
-          --file DOCKERFILE . ; 
-        then
-          echo "::error::Docker-Build Error. Cache will be deleted now!"
-          tree /home/runner/tmp/
-          rm -rf /home/runner/tmp/amd64
-          touch /home/runner/tmp/aufJedenEineAndereDatei
-          tree /home/runner/tmp/
-        fi
+        ${{ env.build_and_cache("linux/amd64", "/home/runner/tmp/amd64", "amd64", "AMD-Cache") }}
 
-    - name: echo 
-      run: |
-        echo "das sollte jetzt trotzdem ausgeführt werden"
-
-
-
-        #docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
-        #docker build . --file DOCKERFILE --tag ghcr.io/seboknt/web:latest
-        #docker push ghcr.io/seboknt/web:latest
