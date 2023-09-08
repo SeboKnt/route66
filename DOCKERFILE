@@ -1,3 +1,4 @@
+# Dockerfile
 FROM alpine
 RUN apk add nginx php
 RUN mkdir -p /run/nginx
