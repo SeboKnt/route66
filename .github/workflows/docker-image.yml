@@ -25,36 +25,25 @@ jobs:
           /home/runner/tmp
         key: docker-tmp
 
-    - name: Build the Docker image and push to ghcr.io
+    - name: Env prep
       run: | 
         docker buildx create --use
         docker buildx inspect --bootstrap
 
-        docker buildx build \
+    
+    - name: Docker Build
+      run: |
+        set -e
+        if ! docker buildx build \
           --platform linux/amd64 \
           --cache-from type=local,src=/home/runner/tmp/amd64 \
           --cache-to type=local,dest=/home/runner/tmp/amd64 \
-          --tag seboknt/66:amd64 \
-          --file DOCKERFILE .
-
-        echo "-------------------------------------------------------------------------------------------------------"
-
-        docker buildx build \
-          --platform linux/arm64 \
-          --cache-from type=local,src=/home/runner/tmp/arm64 \
-          --cache-to type=local,dest=/home/runner/tmp/arm64 \
-          --tag seboknt/66:arm64 \
-          --file DOCKERFILE .
-
-        echo "-------------------------------------------------------------------------------------------------------"
-
-        docker buildx build \
-          --platform linux/amd64,linux/arm64 \
-          --cache-from type=local,src=/home/runner/tmp/amd64 \
-          --cache-from type=local,src=/home/runner/tmp/arm64 \
-          --tag seboknt/66:dev \
-          --file DOCKERFILE .
-
+          --tag ${GITHUB_REPOSITORY,,}:amd64 \
+          --file DOCKERFILE .; then
+          echo "::error::Docker-Build Error. Cache will be deleted now!"
+          rm -rf /home/runner/tmp/amd64
+          exit 1
+        fi
 
         #docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
         #docker build . --file DOCKERFILE --tag ghcr.io/seboknt/web:latest
