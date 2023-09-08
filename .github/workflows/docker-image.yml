@@ -45,6 +45,12 @@ jobs:
           exit 0
         fi
 
+    - name: echo 
+      run: |
+        echo "das sollte jetzt trotzdem ausgeführt werden"
+
+
+
         #docker login --username seboknt --password ${{ secrets.GH_PAT }} ghcr.io
         #docker build . --file DOCKERFILE --tag ghcr.io/seboknt/web:latest
         #docker push ghcr.io/seboknt/web:latest
