@@ -33,7 +33,7 @@ jobs:
 
     - name: Docker Build
       run: |
-        tree /home/runner/tmp/
+        #tree /home/runner/tmp/
         if ! docker buildx build \
           --platform linux/amd64 \
           --cache-from type=local,src=/home/runner/tmp/amd64 \
@@ -42,7 +42,7 @@ jobs:
           --file DOCKERFILE . ; 
         then
           echo "::error::Docker-Build Error. Cache will be deleted now!"
-          tree /home/runner/tmp/
+          #tree /home/runner/tmp/
           #rm -rf /home/runner/tmp/amd64
           #touch /home/runner/tmp/aufJedenEineAndereDatei
           #tree /home/runner/tmp/
