@@ -22,9 +22,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: /home/runner/tmp
-        key: docker-${{ runner.os }}-${{ github.run_id }}
+        key: docker-${{ github.run_id }}
         restore-keys: |
-          docker-${{ runner.os }}
+          docker-
     
     - name: Env prep
       run: | 
