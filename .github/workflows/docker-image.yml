@@ -42,7 +42,6 @@ jobs:
           --file DOCKERFILE .; then
           echo "::error::Docker-Build Error. Cache will be deleted now!"
           rm -rf /home/runner/tmp/amd64
-          exit 0
         fi
 
     - name: echo 
