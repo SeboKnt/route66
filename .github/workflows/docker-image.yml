@@ -26,6 +26,11 @@ env:
         rm -rf $cache_path
       fi
     }
+  
+  echo: |-
+    echo() {
+      echo $1
+    }
 
 jobs:
 
@@ -53,4 +58,5 @@ jobs:
 
     - name: Docker Build
       run: |
-        ${{ env.build_and_cache("linux/amd64", "/home/runner/tmp/amd64", "amd64", "AMD-Cache") }}
+        #${{ env.build_and_cache("linux/amd64", "/home/runner/tmp/amd64", "amd64", "AMD-Cache") }}
+        ${{ env.echo }} Helloooo
