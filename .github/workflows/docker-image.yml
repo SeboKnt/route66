@@ -17,7 +17,7 @@ env:
         --cache-from type=local,src=/home/runner/tmp/$arch \
         --cache-to type=local,dest=/home/runner/tmp/$arch \
         --tag ${GITHUB_REPOSITORY,,}:$arch \
-        --file Dockerfile . ;
+        --file DOCKERFILE . ;
       then
         echo "::error::Docker-Build Error. $arch Cache will be deleted now!"
         rm -rf /home/runner/tmp/$arch/
