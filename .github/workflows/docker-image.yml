@@ -28,8 +28,8 @@ env:
     }
   
   echo: |-
-    echo() {
-      echo $1
+    say() {
+      echo "$1"
     }
 
 jobs:
@@ -59,4 +59,4 @@ jobs:
     - name: Docker Build
       run: |
         ${{ env.echo }} 
-        echo Helloooo
+        say Helloooo
