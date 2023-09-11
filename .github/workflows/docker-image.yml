@@ -58,4 +58,5 @@ jobs:
 
     - name: Docker Build
       run: |
-        ${{ env.echo }} Helloooo
+        ${{ env.echo }} 
+        echo() Helloooo
