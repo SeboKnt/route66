@@ -10,20 +10,17 @@ on:
 env:
   build_and_cache: |-
     build_and_cache() {
-      platform=$1
-      cache_path=$2
-      tag_suffix=$3
-      cache_name=$4
+      arch="$1"
 
       if ! docker buildx build \
-        --platform $platform \
-        --cache-from type=local,src=$cache_path \
-        --cache-to type=local,dest=$cache_path \
-        --tag ${GITHUB_REPOSITORY,,}:$tag_suffix \
+        --platform linux/$arch \
+        --cache-from type=local,src=/home/runner/tmp/$arch \
+        --cache-to type=local,dest=/home/runner/tmp/$arch \
+        --tag ${GITHUB_REPOSITORY,,}:$arch \
         --file Dockerfile . ;
       then
-        echo "::error::Docker-Build Error. $cache_name Cache will be deleted now!"
-        rm -rf $cache_path
+        echo "::error::Docker-Build Error. $arch Cache will be deleted now!"
+        rm -rf /home/runner/tmp/$arch/
       fi
     }
   
@@ -58,5 +55,5 @@ jobs:
 
     - name: Docker Build
       run: |
-        ${{ env.echo }} 
-        say Helloooo
+        ${{ env.build_and_cache }} 
+        build_and_cache amd64
